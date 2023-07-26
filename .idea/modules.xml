@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/module-main/stage3-module4-task.module-main.main.iml" filepath="$PROJECT_DIR$/.idea/modules/module-main/stage3-module4-task.module-main.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/module-repository/stage3-module4-task.module-repository.main.iml" filepath="$PROJECT_DIR$/.idea/modules/module-repository/stage3-module4-task.module-repository.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/module-service/stage3-module4-task.module-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/module-service/stage3-module4-task.module-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/module-web/stage3-module4-task.module-web.main.iml" filepath="$PROJECT_DIR$/.idea/modules/module-web/stage3-module4-task.module-web.main.iml" />
+    </modules>
+  </component>
+</project>
