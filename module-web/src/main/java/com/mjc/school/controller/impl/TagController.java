@@ -54,6 +54,7 @@ public class TagController implements BaseController<TagRequestDTO, TagResponseD
 
     @Override
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<TagResponseDTO> create(@RequestBody TagRequestDTO createRequest) {
         TagResponseDTO response = service.create(createRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);

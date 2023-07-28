@@ -47,6 +47,7 @@ public class NewsController implements BaseController<NewsRequestDTO, NewsRespon
 
     @Override
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<NewsResponseDTO> create(@RequestBody NewsRequestDTO createRequest) {
         NewsResponseDTO newsDTO = service.create(createRequest);
         return new ResponseEntity<>(newsDTO, HttpStatus.CREATED);

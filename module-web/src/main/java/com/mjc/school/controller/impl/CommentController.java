@@ -52,6 +52,7 @@ public class CommentController implements BaseController<CommentRequestDTO, Comm
 
     @Override
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CommentResponseDTO> create(@RequestBody CommentRequestDTO createRequest) {
         CommentResponseDTO commentDTO = service.create(createRequest);
         return new ResponseEntity<>(commentDTO, HttpStatus.CREATED);
