@@ -29,6 +29,8 @@ subprojects {
         implementation 'org.postgresql:postgresql:42.6.0'
 
         implementation 'com.h2database:h2:2.1.214'
+        implementation 'com.github.java-json-tools:json-patch:1.13'
+
         testImplementation "org.springframework:spring-test:$springVersion"
         testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiterVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiterVersion"

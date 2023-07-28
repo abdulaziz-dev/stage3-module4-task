@@ -1,5 +1,10 @@
 package com.mjc.school.controller.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.mjc.school.controller.BaseController;
 import com.mjc.school.service.TagService;
 import com.mjc.school.service.dto.TagRequestDTO;
@@ -16,6 +21,7 @@ import java.util.List;
 public class TagController implements BaseController<TagRequestDTO, TagResponseDTO, Long> {
 
     private final TagService service;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public TagController(TagService service) {
@@ -60,10 +66,29 @@ public class TagController implements BaseController<TagRequestDTO, TagResponseD
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
+    @PatchMapping(path = "/{id:\\d+}", consumes = "application/json-patch+json")
+    public ResponseEntity<TagResponseDTO> updatePart(@PathVariable("id") Long id, @RequestBody JsonPatch patch) {
+        try {
+            TagResponseDTO tag = service.readById(id);
+            TagRequestDTO requestTag = new TagRequestDTO(tag.id(), tag.name());
+            TagRequestDTO patchedTag = applyPatchToTag(patch, requestTag);
+
+            return new ResponseEntity<>(service.update(patchedTag),HttpStatus.OK);
+        }
+        catch (JsonPatchException | JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     @Override
     @DeleteMapping("/{id:\\d+}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable("id") Long id) {
         service.deleteById(id);
+    }
+
+    private TagRequestDTO applyPatchToTag(JsonPatch patch, TagRequestDTO tag) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = patch.apply(objectMapper.convertValue(tag, JsonNode.class));
+        return objectMapper.treeToValue(patched, TagRequestDTO.class);
     }
 }

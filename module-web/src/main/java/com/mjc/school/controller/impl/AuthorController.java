@@ -1,5 +1,10 @@
 package com.mjc.school.controller.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.mjc.school.controller.BaseController;
 import com.mjc.school.service.AuthorService;
 import com.mjc.school.service.dto.AuthorRequestDTO;
@@ -14,6 +19,7 @@ import java.util.List;
 @RequestMapping("/authors")
 public class AuthorController implements BaseController<AuthorRequestDTO, AuthorResponseDTO, Long> {
     private final AuthorService service;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public AuthorController(AuthorService service) {
         this.service = service;
@@ -60,10 +66,29 @@ public class AuthorController implements BaseController<AuthorRequestDTO, Author
         return new ResponseEntity<>(authorDTO, HttpStatus.OK);
     }
 
+    @PatchMapping(path = "/{id:\\d+}", consumes = "application/json-patch+json")
+    public ResponseEntity<AuthorResponseDTO> updatePart(@PathVariable("id") Long id, @RequestBody JsonPatch patch) {
+        try {
+            AuthorResponseDTO author = service.readById(id);
+            AuthorRequestDTO request = new AuthorRequestDTO(author.id(), author.name());
+            AuthorRequestDTO patchedAuthor = applyPatch(patch, request);
+
+            return new ResponseEntity<>(service.update(patchedAuthor),HttpStatus.OK);
+        }
+        catch (JsonPatchException | JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     @Override
     @DeleteMapping("/{id:\\d+}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         service.deleteById(id);
+    }
+
+    private AuthorRequestDTO applyPatch(JsonPatch patch, AuthorRequestDTO dto) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = patch.apply(objectMapper.convertValue(dto, JsonNode.class));
+        return objectMapper.treeToValue(patched, AuthorRequestDTO.class);
     }
 }

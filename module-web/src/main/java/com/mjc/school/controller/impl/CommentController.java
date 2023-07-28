@@ -1,9 +1,13 @@
 package com.mjc.school.controller.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.mjc.school.controller.BaseController;
 import com.mjc.school.service.CommentService;
-import com.mjc.school.service.dto.CommentRequestDTO;
-import com.mjc.school.service.dto.CommentResponseDTO;
+import com.mjc.school.service.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,7 @@ import java.util.List;
 public class CommentController implements BaseController<CommentRequestDTO, CommentResponseDTO, Long> {
 
     private final CommentService service;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public CommentController(CommentService service) {
@@ -60,10 +65,29 @@ public class CommentController implements BaseController<CommentRequestDTO, Comm
         return new ResponseEntity<>(commentDTO, HttpStatus.OK);
     }
 
+    @PatchMapping(path = "/{id:\\d+}", consumes = "application/json-patch+json")
+    public ResponseEntity<CommentResponseDTO> updatePart(@PathVariable("id") Long id, @RequestBody JsonPatch patch) {
+        try {
+            CommentResponseDTO comment = service.readById(id);
+            CommentRequestDTO request = new CommentRequestDTO(comment.id(), comment.content(), comment.newsId());
+            CommentRequestDTO patchedComment = applyPatch(patch, request);
+
+            return new ResponseEntity<>(service.update(patchedComment),HttpStatus.OK);
+        }
+        catch (JsonPatchException | JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable("id") Long id) {
         service.deleteById(id);
+    }
+
+    private CommentRequestDTO applyPatch(JsonPatch patch, CommentRequestDTO dto) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = patch.apply(objectMapper.convertValue(dto, JsonNode.class));
+        return objectMapper.treeToValue(patched, CommentRequestDTO.class);
     }
 }

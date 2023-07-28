@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
 @Repository
 public class CommentRepositoryImpl extends AbstractRepository<CommentModel, Long> implements CommentRepository {
 
