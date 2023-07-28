@@ -17,7 +17,8 @@ public interface NewsModelMapper {
     @Mappings(value = {@Mapping(target = "createDate", ignore = true),
             @Mapping(target = "lastUpdateDate", ignore = true),
             @Mapping(target = "author.id", source = "authorId"),
-            @Mapping(target = "tags", ignore = true)
+            @Mapping(target = "tags", ignore = true),
+            @Mapping(target = "comments", ignore = true)
     })
     NewsModel dtoToModel (NewsRequestDTO requestDTO);
 

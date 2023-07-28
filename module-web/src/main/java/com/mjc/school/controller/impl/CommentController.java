@@ -1,10 +1,9 @@
 package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
-import com.mjc.school.service.BaseService;
+import com.mjc.school.service.CommentService;
 import com.mjc.school.service.dto.CommentRequestDTO;
 import com.mjc.school.service.dto.CommentResponseDTO;
-import com.mjc.school.service.impl.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,7 @@ import java.util.List;
 @RequestMapping("/comments")
 public class CommentController implements BaseController<CommentRequestDTO, CommentResponseDTO, Long> {
 
-    private final BaseService<CommentRequestDTO, CommentResponseDTO, Long> service;
+    private final CommentService service;
 
     @Autowired
     public CommentController(CommentService service) {
@@ -24,7 +23,10 @@ public class CommentController implements BaseController<CommentRequestDTO, Comm
 
     @Override
     @GetMapping
-    public ResponseEntity<List<CommentResponseDTO>> readAll(int page, int limit, String sortBy) {
+    public ResponseEntity<List<CommentResponseDTO>> readAll(
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "limit", required = false, defaultValue = "5") int limit,
+            @RequestParam(name = "sort_by", required = false, defaultValue = "content") String sortBy) {
         List<CommentResponseDTO> comments = service.readAll(page, limit, sortBy);
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
@@ -35,6 +37,13 @@ public class CommentController implements BaseController<CommentRequestDTO, Comm
         CommentResponseDTO commentDTO = service.readById(id);
         return new ResponseEntity<>(commentDTO, HttpStatus.OK);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CommentResponseDTO>> readByNewsId(@RequestParam(name = "news_id") Long newsId) {
+        List<CommentResponseDTO> commentsDTO = service.getCommentsByNewsId(newsId);
+        return new ResponseEntity<>(commentsDTO, HttpStatus.OK);
+    }
+
 
     @Override
     @PostMapping

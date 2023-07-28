@@ -1,10 +1,9 @@
 package com.mjc.school.service.impl;
 
-import com.mjc.school.repository.BaseRepository;
-import com.mjc.school.repository.impl.NewsRepository;
+import com.mjc.school.repository.NewsRepository;
+import com.mjc.school.repository.TagRepository;
 import com.mjc.school.repository.model.NewsModel;
-import com.mjc.school.repository.model.TagModel;
-import com.mjc.school.service.BaseService;
+import com.mjc.school.service.NewsService;
 import com.mjc.school.service.dto.NewsRequestDTO;
 import com.mjc.school.service.dto.NewsResponseDTO;
 import com.mjc.school.service.exception.ErrorCodes;
@@ -13,22 +12,22 @@ import com.mjc.school.service.mapper.NewsModelMapper;
 import com.mjc.school.service.validator.Validator;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
 @Service
-public class NewsService implements BaseService<NewsRequestDTO, NewsResponseDTO, Long> {
+@Transactional
+public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
-    private final BaseRepository<TagModel, Long> tagRepository;
+    private final TagRepository tagRepository;
     private final NewsModelMapper newsMapper = Mappers.getMapper(NewsModelMapper.class);
     private final Validator validator;
 
     @Autowired
-    public NewsService(NewsRepository newsRepository, BaseRepository<TagModel, Long> tagRepository, Validator validator){
+    public NewsServiceImpl(NewsRepository newsRepository, TagRepository tagRepository, Validator validator){
         this.newsRepository = newsRepository;
         this.tagRepository = tagRepository;
         this.validator = validator;
@@ -36,7 +35,7 @@ public class NewsService implements BaseService<NewsRequestDTO, NewsResponseDTO,
 
     @Override
     public List<NewsResponseDTO> readAll(int page, int limit, String sortBy) {
-        return newsMapper.modelListToDtoList(newsRepository.readAll());
+        return newsMapper.modelListToDtoList(newsRepository.readAll( page, limit, sortBy));
     }
 
     @Override

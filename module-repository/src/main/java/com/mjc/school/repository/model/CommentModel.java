@@ -21,13 +21,6 @@ public class CommentModel implements BaseEntity<Long> {
 
     public CommentModel(){}
 
-    public NewsModel getNews() {
-        return news;
-    }
-
-    public void setNews(NewsModel news) {
-        this.news = news;
-    }
 
     public CommentModel(Long id, String content, LocalDateTime createDate, LocalDateTime lastUpdateDate, NewsModel news) {
         this.id = id;
@@ -35,6 +28,28 @@ public class CommentModel implements BaseEntity<Long> {
         this.createDate = createDate;
         this.lastUpdateDate = lastUpdateDate;
         this.news = news;
+    }
+
+
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    @LastModifiedDate
+    private LocalDateTime lastUpdateDate;
+
+    @ManyToOne
+    @JoinColumn(name = "news_id")
+    private NewsModel news;
+
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getContent() {
@@ -61,27 +76,13 @@ public class CommentModel implements BaseEntity<Long> {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    @CreatedDate
-    private LocalDateTime createDate;
-
-    @LastModifiedDate
-    private LocalDateTime lastUpdateDate;
-
-    @ManyToOne
-    @JoinColumn(name = "news_id")
-    private NewsModel news;
-
-
-    @Override
-    public Long getId() {
-        return id;
+    public NewsModel getNews() {
+        return news;
     }
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
+    public void setNews(NewsModel news) {
+        this.news = news;
     }
-
     @Override
     public String toString() {
         return "CommentModel{" +

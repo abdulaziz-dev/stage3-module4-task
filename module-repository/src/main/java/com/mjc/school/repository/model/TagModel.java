@@ -12,7 +12,7 @@ public class TagModel implements BaseEntity<Long>{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Basic
+    @Column(name = "name")
     private String name;
 
 

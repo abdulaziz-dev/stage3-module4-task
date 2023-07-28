@@ -1,6 +1,5 @@
 package com.mjc.school.service.mapper;
 
-import com.mjc.school.repository.model.AuthorModel;
 import com.mjc.school.repository.model.CommentModel;
 import com.mjc.school.service.dto.CommentRequestDTO;
 import com.mjc.school.service.dto.CommentResponseDTO;
@@ -12,6 +11,7 @@ import java.util.List;
 
 @Mapper
 public interface CommentModelMapper {
+
     @Mapping(target = "newsId", source = "news.id")
     CommentResponseDTO modelToDTO(CommentModel commentModel);
 

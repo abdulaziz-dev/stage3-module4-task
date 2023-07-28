@@ -1,10 +1,9 @@
 package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
-import com.mjc.school.service.BaseService;
+import com.mjc.school.service.AuthorService;
 import com.mjc.school.service.dto.AuthorRequestDTO;
 import com.mjc.school.service.dto.AuthorResponseDTO;
-import com.mjc.school.service.impl.AuthorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/authors")
 public class AuthorController implements BaseController<AuthorRequestDTO, AuthorResponseDTO, Long> {
-    private final BaseService<AuthorRequestDTO, AuthorResponseDTO, Long> service;
+    private final AuthorService service;
 
     public AuthorController(AuthorService service) {
         this.service = service;
@@ -27,13 +26,22 @@ public class AuthorController implements BaseController<AuthorRequestDTO, Author
             @RequestParam(value = "limit", required = false, defaultValue = "5") int limit,
             @RequestParam(value = "sort_by", required = false, defaultValue = "name") String sortBy)
     {
-        return null;
+        List<AuthorResponseDTO> authors = service.readAll(page, limit, sortBy);
+        return new ResponseEntity<>(authors, HttpStatus.OK);
     }
 
     @Override
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<AuthorResponseDTO> readById(@PathVariable Long id) {
         AuthorResponseDTO authorDTO = service.readById(id);
+        return new ResponseEntity<>(authorDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<AuthorResponseDTO> readByNewsId(
+                                                @RequestParam(name = "news_id") Long newsId)
+    {
+        AuthorResponseDTO authorDTO = service.getAuthorByNewsId(newsId);
         return new ResponseEntity<>(authorDTO, HttpStatus.OK);
     }
 
@@ -45,7 +53,7 @@ public class AuthorController implements BaseController<AuthorRequestDTO, Author
     }
 
     @Override
-    @PutMapping("/{id}")
+    @PutMapping("/{id:\\d+}")
     public ResponseEntity<AuthorResponseDTO> update(@PathVariable Long id,
                                                     @RequestBody AuthorRequestDTO updateRequest) {
         AuthorResponseDTO authorDTO = service.update(updateRequest);
@@ -53,7 +61,7 @@ public class AuthorController implements BaseController<AuthorRequestDTO, Author
     }
 
     @Override
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:\\d+}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         service.deleteById(id);

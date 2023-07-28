@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface BaseRepository<T extends BaseEntity<K>, K> {
 
-    List<T> readAll();
+    List<T> readAll(int page, int limit, String sortBy);
 
     Optional<T> readById(K id);
 

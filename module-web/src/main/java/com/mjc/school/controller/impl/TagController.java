@@ -1,10 +1,9 @@
 package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.BaseController;
-import com.mjc.school.service.BaseService;
+import com.mjc.school.service.TagService;
 import com.mjc.school.service.dto.TagRequestDTO;
 import com.mjc.school.service.dto.TagResponseDTO;
-import com.mjc.school.service.impl.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,7 @@ import java.util.List;
 @RequestMapping("/tags")
 public class TagController implements BaseController<TagRequestDTO, TagResponseDTO, Long> {
 
-    private final BaseService<TagRequestDTO, TagResponseDTO, Long> service;
+    private final TagService service;
 
     @Autowired
     public TagController(TagService service) {
@@ -39,6 +38,12 @@ public class TagController implements BaseController<TagRequestDTO, TagResponseD
     public ResponseEntity<TagResponseDTO> readById(@PathVariable("id") Long id) {
         TagResponseDTO response = service.readById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<TagResponseDTO>> readByNewsId(@RequestParam(name = "news_id") Long newsId) {
+        List<TagResponseDTO> tags = service.getTagsByNewsId(newsId);
+        return new ResponseEntity<>(tags, HttpStatus.OK);
     }
 
     @Override

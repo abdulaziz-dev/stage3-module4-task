@@ -37,6 +37,7 @@ public class NewsModel implements BaseEntity<Long>{
     @JoinColumn(name = "author_id")
     private AuthorModel author;
 
+
     @OneToMany
     private Set<CommentModel> comments;
 
@@ -59,6 +60,14 @@ public class NewsModel implements BaseEntity<Long>{
         this.author = author;
     }
 
+    public Set<CommentModel> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<CommentModel> comments) {
+        this.comments = comments;
+    }
+
     public Set<TagModel> getTags() {
         return tags;
     }
@@ -69,6 +78,10 @@ public class NewsModel implements BaseEntity<Long>{
 
     public void addTag(TagModel tag){
         tags.add(tag);
+    }
+
+    public void addComment(CommentModel comment){
+        comments.add(comment);
     }
 
     public String getTitle() {
